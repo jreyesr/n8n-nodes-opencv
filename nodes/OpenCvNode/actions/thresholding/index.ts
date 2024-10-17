@@ -1,6 +1,8 @@
 import {IExecuteFunctions, INodeExecutionData, INodeProperties} from "n8n-workflow";
 
 import * as binary from './binary.operation';
+import * as adaptive from './adaptive.operation';
+
 
 export const description: INodeProperties[] = [
 	{
@@ -15,6 +17,12 @@ export const description: INodeProperties[] = [
 				description: 'Simple binary threshold',
 				action: 'Binary threshold',
 			},
+			{
+				name: 'Adaptive',
+				value: 'adaptive',
+				description: 'Adaptive thresholds where the value is computed automatically',
+				action: 'Adaptive threshold',
+			},
 		],
 		default: 'binary',
 		displayOptions: {
@@ -24,14 +32,17 @@ export const description: INodeProperties[] = [
 		},
 	},
 	...binary.description,
+	...adaptive.description
 ]
 
 export async function execute(this: IExecuteFunctions): Promise<INodeExecutionData[]> {
 	const operation = this.getNodeParameter('operation', 0);
 
-	switch(operation) {
+	switch (operation) {
 		case "binary":
-			return binary.execute.call(this)
+			return binary.execute.call(this);
+		case "adaptive":
+			return adaptive.execute.call(this);
 	}
 	return []
 }
