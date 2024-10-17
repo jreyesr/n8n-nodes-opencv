@@ -1,0 +1,15 @@
+{
+	"node": "n8n-nodes-opencv.OpenCV",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": [
+		"Miscellaneous"
+	],
+	"resources": {
+		"primaryDocumentation": [
+			{
+				"url": "https://docs.opencv.org/4.x/d5/d10/tutorial_js_root.html"
+			}
+		]
+	}
+}

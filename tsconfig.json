@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"strict": true,
+		"strict": false,
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"target": "es2019",
@@ -20,11 +20,12 @@
 		"sourceMap": true,
 		"skipLibCheck": true,
 		"outDir": "./dist/",
+		"allowJs": true, // we need this to carry the opencv.js file, otherwise it's ignored
 	},
 	"include": [
 		"credentials/**/*",
 		"nodes/**/*",
 		"nodes/**/*.json",
 		"package.json",
-	],
+	]
 }
