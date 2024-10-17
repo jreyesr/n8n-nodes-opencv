@@ -47,9 +47,9 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 	for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 		const item = items[itemIndex];
 
-		const mode = this.getNodeParameter('mode', itemIndex);
-		const imagePropertyName = this.getNodeParameter("inputImagePropertyName", itemIndex)
-		const threshold = this.getNodeParameter("threshold", itemIndex)
+		const mode = this.getNodeParameter('mode', itemIndex) as string
+		const imagePropertyName = this.getNodeParameter("inputImagePropertyName", itemIndex) as string
+		const threshold = this.getNodeParameter("threshold", itemIndex) as string
 
 		const newItem: INodeExecutionData = {
 			json: item.json,
