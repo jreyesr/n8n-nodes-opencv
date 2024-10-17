@@ -18,7 +18,8 @@ export class OpenCvNode implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'OpenCV',
 		name: 'openCvNode',
-		group: [],
+		icon: "file:opencv_logo.svg",
+		group: ["transform"],
 		version: 1,
 		description: 'OpenCV.js node',
 		defaults: {
