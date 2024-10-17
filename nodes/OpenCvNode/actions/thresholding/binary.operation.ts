@@ -29,6 +29,11 @@ export const description: INodeProperties[] = [
 		],
 		default: "normal",
 		required: true,
+		displayOptions: {
+			show: {
+				operation: ['binary'],
+			},
+		},
 	},
 	{
 		displayName: "Threshold",
@@ -37,6 +42,11 @@ export const description: INodeProperties[] = [
 		type: "number",
 		default: 128,
 		required: true,
+		displayOptions: {
+			show: {
+				operation: ['binary'],
+			},
+		},
 	}
 ]
 
@@ -105,6 +115,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 		newItem.binary!["out"] = {
 			...newItem.binary![imagePropertyName],
 			...binaryData,
+			mimeType: "image/png",
 		};
 		dst.delete();
 
