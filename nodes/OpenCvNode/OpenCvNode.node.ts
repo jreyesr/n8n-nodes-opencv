@@ -6,6 +6,8 @@ import {
 } from 'n8n-workflow';
 
 import * as thresholding from './actions/thresholding/index';
+import * as color from './actions/color/index';
+import * as stats from './actions/stats/index';
 
 
 export const cv = require('./opencv.js');
@@ -42,16 +44,17 @@ export class OpenCvNode implements INodeType {
 				name: 'module',
 				type: 'options',
 				options: [
-					{
-						name: "Thresholding",
-						value: "thresholding"
-					}
+					{name: "Thresholding", value: "thresholding"},
+					{name: "Color Modifications", value: "color"},
+					{name: "Image Stats", value: "stats"},
 				],
 				default: "thresholding",
 				required: true,
 				description: 'The OpenCV module to use',
 			},
-			...thresholding.description
+			...thresholding.description,
+			...color.description,
+			...stats.description,
 		],
 	};
 
@@ -61,7 +64,14 @@ export class OpenCvNode implements INodeType {
 
 		switch (module) {
 			case "thresholding":
-				items = await thresholding.execute.call(this)
+				items = await thresholding.execute.call(this);
+				break;
+			case "color":
+				items = await color.execute.call(this);
+				break;
+			case "stats":
+				items = await stats.execute.call(this);
+				break;
 		}
 
 		// Iterates over all input items and add the key "myString" with the
