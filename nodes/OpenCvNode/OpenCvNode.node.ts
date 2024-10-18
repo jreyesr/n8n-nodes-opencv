@@ -43,6 +43,7 @@ export class OpenCvNode implements INodeType {
 				displayName: 'Module',
 				name: 'module',
 				type: 'options',
+				noDataExpression: true,
 				options: [
 					{name: "Thresholding", value: "thresholding"},
 					{name: "Color Modifications", value: "color"},
@@ -57,6 +58,23 @@ export class OpenCvNode implements INodeType {
 			...color.description,
 			...stats.description,
 			...binary.description,
+			{
+				displayName: "Advanced Options",
+				placeholder: 'Advanced Options',
+				name: 'advancedOptions',
+				type: 'collection',
+				default: {},
+				options: [
+					{
+						displayName: "Output Image Field Name",
+						name: 'outputImagePropertyName',
+						type: 'string',
+						default: "out",
+						requiresDataPath: 'single',
+						description: 'The name of the binary property that will contain the output image'
+					}
+				]
+			}
 		],
 	};
 

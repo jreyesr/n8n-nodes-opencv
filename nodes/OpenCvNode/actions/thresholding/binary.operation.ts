@@ -59,6 +59,9 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 
 		const mode = this.getNodeParameter('mode', itemIndex) as string
 		const imagePropertyName = this.getNodeParameter("inputImagePropertyName", itemIndex) as string
+		const outputPropertyName = this.getNodeParameter('advancedOptions.outputImagePropertyName', itemIndex, 'out', {
+			extractValue: true,
+		}) as string;
 		const threshold = this.getNodeParameter("threshold", itemIndex) as string
 
 		const newItem: INodeExecutionData = {
@@ -112,7 +115,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 			height: dst.rows,
 			data: Buffer.from(dst.data)
 		}).getBuffer("image/png"));
-		newItem.binary!["out"] = {
+		newItem.binary![outputPropertyName] = {
 			...newItem.binary![imagePropertyName],
 			...binaryData,
 			mimeType: "image/png",

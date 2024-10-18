@@ -10,7 +10,10 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 
 	for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 		const item = items[itemIndex];
-		const imagePropertyName = this.getNodeParameter("inputImagePropertyName", itemIndex) as string
+		const imagePropertyName = this.getNodeParameter("inputImagePropertyName", itemIndex) as string;
+		const outputPropertyName = this.getNodeParameter('advancedOptions.outputImagePropertyName', itemIndex, 'out', {
+			extractValue: true,
+		}) as string;
 
 		const newItem: INodeExecutionData = {
 			json: item.json,
@@ -40,7 +43,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 			height: dst.rows,
 			data: Buffer.from(dst.data)
 		}).getBuffer("image/png"));
-		newItem.binary!["out"] = {
+		newItem.binary![outputPropertyName] = {
 			...newItem.binary![imagePropertyName],
 			...binaryData,
 			mimeType: "image/png",
