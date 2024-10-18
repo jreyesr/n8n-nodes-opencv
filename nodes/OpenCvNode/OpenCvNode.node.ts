@@ -8,7 +8,7 @@ import {
 import * as thresholding from './actions/thresholding/index';
 import * as color from './actions/color/index';
 import * as stats from './actions/stats/index';
-
+import * as binary from './actions/binary/index';
 
 export const cv = require('./opencv.js');
 cv.onRuntimeInitialized = function () {
@@ -47,6 +47,7 @@ export class OpenCvNode implements INodeType {
 					{name: "Thresholding", value: "thresholding"},
 					{name: "Color Modifications", value: "color"},
 					{name: "Image Stats", value: "stats"},
+					{name: "Binary Operations", value: "binaryOps", description: "Bitwise operations (e.g. AND, OR, NOT)"},
 				],
 				default: "thresholding",
 				required: true,
@@ -55,6 +56,7 @@ export class OpenCvNode implements INodeType {
 			...thresholding.description,
 			...color.description,
 			...stats.description,
+			...binary.description,
 		],
 	};
 
@@ -71,6 +73,9 @@ export class OpenCvNode implements INodeType {
 				break;
 			case "stats":
 				items = await stats.execute.call(this);
+				break;
+			case "binaryOps":
+				items = await binary.execute.call(this);
 				break;
 		}
 
