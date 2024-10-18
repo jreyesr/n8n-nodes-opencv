@@ -72,7 +72,20 @@ export class OpenCvNode implements INodeType {
 						default: "out",
 						requiresDataPath: 'single',
 						description: 'The name of the binary property that will contain the output image'
-					}
+					},
+					{
+						displayName: 'Histogram Height',
+						name: 'height',
+						type: 'number',
+						default: 200,
+						description: 'The name of the binary property that will contain the output image',
+						displayOptions: {
+							show: {
+								'/module': ['stats'],
+								'/operation': ['histogram'],
+							}
+						}
+					},
 				]
 			}
 		],

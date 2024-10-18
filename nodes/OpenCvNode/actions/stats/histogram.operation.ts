@@ -4,7 +4,11 @@ import {makeProcessor} from "../general";
 
 export const description: INodeProperties[] = []
 
-export const execute = makeProcessor(async function (src) {
+export const execute = makeProcessor(async function (src, itemIndex) {
+	const HEIGHT = this.getNodeParameter('advancedOptions.height', itemIndex, 200, {
+		extractValue: true,
+	}) as number;
+
 	cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
 	const srcVec = new cv.MatVector();
 	srcVec.push_back(src);
@@ -15,7 +19,6 @@ export const execute = makeProcessor(async function (src) {
 	const result = cv.minMaxLoc(hist, mask);
 	mask.delete();
 	const max = result.maxVal;
-	const HEIGHT = src.rows;
 	const rgbHist = new cv.Mat.zeros(HEIGHT, 256, cv.CV_8UC3);
 
 	for (let i = 0; i < 256; i++) {
