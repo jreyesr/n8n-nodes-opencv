@@ -1,6 +1,6 @@
-import {IExecuteFunctions, INodeExecutionData, INodeProperties} from "n8n-workflow";
+import {INodeProperties} from "n8n-workflow";
 import {cv} from "../../OpenCvNode.node";
-import {Jimp} from "jimp";
+import {makeProcessor} from "../general";
 
 export const description: INodeProperties[] = [
 	{
@@ -50,79 +50,38 @@ export const description: INodeProperties[] = [
 	}
 ]
 
-export async function execute(this: IExecuteFunctions): Promise<INodeExecutionData[]> {
-	let items: INodeExecutionData[] = this.getInputData();
-	let toReturn: INodeExecutionData[] = [];
+export const execute = makeProcessor(async function (src, itemIndex) {
+	const mode = this.getNodeParameter('mode', itemIndex) as string;
+	const threshold = this.getNodeParameter("threshold", itemIndex) as string;
 
-	for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
-		const item = items[itemIndex];
-
-		const mode = this.getNodeParameter('mode', itemIndex) as string
-		const imagePropertyName = this.getNodeParameter("inputImagePropertyName", itemIndex) as string
-		const outputPropertyName = this.getNodeParameter('advancedOptions.outputImagePropertyName', itemIndex, 'out', {
-			extractValue: true,
-		}) as string;
-		const threshold = this.getNodeParameter("threshold", itemIndex) as string
-
-		const newItem: INodeExecutionData = {
-			json: item.json,
-			binary: item.binary,
-			pairedItem: {
-				item: itemIndex,
-			},
-		};
-
-		let cvMode;
-		switch (mode) {
-			case "normal":
-				cvMode = cv.THRESH_BINARY;
-				break;
-			case "inverted":
-				cvMode = cv.THRESH_BINARY_INV;
-				break;
-			case "truncate":
-				cvMode = cv.THRESH_TRUNC;
-				break;
-			case "tozero":
-				cvMode = cv.THRESH_TOZERO;
-				break;
-			case "tozero_inv":
-				cvMode = cv.THRESH_TOZERO_INV;
-				break;
-			default:
-				this.logger.warn("Unknown binary thresh mode", {
-					mode,
-					executionId: this.getExecutionId(),
-					workflowId: this.getWorkflow().id
-				})
-		}
-		this.logger.debug("threshold", {thresh: threshold, type: cvMode})
-
-		this.helpers.assertBinaryData(itemIndex, imagePropertyName);
-		const binaryDataBuffer = await this.helpers.getBinaryDataBuffer(
-			itemIndex,
-			imagePropertyName,
-		)
-		const jimpImg = await Jimp.fromBuffer(binaryDataBuffer)
-		const src = cv.matFromImageData(jimpImg.bitmap);
-		const dst = new cv.Mat();
-		cv.threshold(src, dst, threshold, 255, cvMode);
-
-		src.delete();
-
-		const binaryData = await this.helpers.prepareBinaryData(await new Jimp({
-			width: dst.cols,
-			height: dst.rows,
-			data: Buffer.from(dst.data)
-		}).getBuffer("image/png"));
-		newItem.binary![outputPropertyName] = {
-			...newItem.binary![imagePropertyName],
-			...binaryData,
-			mimeType: "image/png",
-		};
-		dst.delete();
-
-		toReturn.push(newItem)
+	let cvMode;
+	switch (mode) {
+		case "normal":
+			cvMode = cv.THRESH_BINARY;
+			break;
+		case "inverted":
+			cvMode = cv.THRESH_BINARY_INV;
+			break;
+		case "truncate":
+			cvMode = cv.THRESH_TRUNC;
+			break;
+		case "tozero":
+			cvMode = cv.THRESH_TOZERO;
+			break;
+		case "tozero_inv":
+			cvMode = cv.THRESH_TOZERO_INV;
+			break;
+		default:
+			this.logger.warn("Unknown binary thresh mode", {
+				mode,
+				executionId: this.getExecutionId(),
+				workflowId: this.getWorkflow().id
+			})
 	}
-	return toReturn;
-}
+	this.logger.debug("threshold", {thresh: threshold, type: cvMode});
+
+	const dst = new cv.Mat();
+	cv.threshold(src, dst, threshold, 255, cvMode);
+
+	return dst;
+})
