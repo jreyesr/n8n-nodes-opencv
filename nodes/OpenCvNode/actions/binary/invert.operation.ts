@@ -9,8 +9,6 @@ export const execute = makeProcessor(async function (src) {
 	cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
 	cv.bitwise_not(gray, dst);
 	gray.delete();
-	// HACK: So Jimp can pack this back into an image, otherwise it gets confused
-	// (Jimp can't handle single-channel images, only RGBA)
-	cv.cvtColor(dst, dst, cv.COLOR_GRAY2RGBA, 0);
+
 	return dst
 })

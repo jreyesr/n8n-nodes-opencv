@@ -44,6 +44,16 @@ export function makeProcessor(process: ProcessorFunction): NodeExecuteFunction {
 			this.logger.debug("Calling node-specific transform function...")
 			const dst = await process.call(this, src, itemIndex, newItem);
 			src.delete();
+			if (dst.channels() === 3) {
+				this.logger.debug(`Returned Mat is RGB, should be RGBA. Correcting`);
+				cv.cvtColor(dst, dst, cv.COLOR_RGB2RGBA, 0); // Add the A channel back, Jimp needs it
+			} else if (dst.channels() === 1) {
+				this.logger.debug(`Returned Mat is grayscale, should be RGBA. Correcting`);
+				cv.cvtColor(dst, dst, cv.COLOR_GRAY2RGBA, 0);
+			} else if (dst.channels() !== 4) {
+				throw new Error(`BUG: Returned Mat has ${dst.channels()} channels, should have 4. This is likely a bug in the node, please report to the maintainers.`)
+			}
+			// now we're sure that dst is RGBA
 
 			const binaryData = await this.helpers.prepareBinaryData(await new Jimp({
 				width: dst.cols,

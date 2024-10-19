@@ -19,18 +19,15 @@ export const execute = makeProcessor(async function (src, itemIndex) {
 	const result = cv.minMaxLoc(hist, mask);
 	mask.delete();
 	const max = result.maxVal;
-	const rgbHist = new cv.Mat.zeros(HEIGHT, 256, cv.CV_8UC3);
+	const dst = new cv.Mat.zeros(HEIGHT, 256, cv.CV_8UC3);
 
 	for (let i = 0; i < 256; i++) {
 		const binVal = hist.data32F[i] * HEIGHT / max;
 		const point1 = new cv.Point(i, HEIGHT - 1);
 		const point2 = new cv.Point((i + 1) - 1, HEIGHT - binVal);
-		cv.rectangle(rgbHist, point1, point2, color, cv.FILLED);
+		cv.rectangle(dst, point1, point2, color, cv.FILLED);
 	}
 	hist.delete();
-	const dst = new cv.Mat();
-	cv.cvtColor(rgbHist, dst, cv.COLOR_RGB2RGBA, 0);
-	rgbHist.delete();
 
 	return dst;
 })
