@@ -3,5 +3,7 @@ declare namespace cv {
 		declare rows: int;
 
 		delete();
+
+		static ones: (width: number, height: number, channelSize: any) => Mat;
 	}
 }

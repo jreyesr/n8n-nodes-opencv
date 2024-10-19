@@ -9,6 +9,8 @@ import * as thresholding from './actions/thresholding/index';
 import * as color from './actions/color/index';
 import * as stats from './actions/stats/index';
 import * as binary from './actions/binary/index';
+import * as morphological from './actions/morphological/index';
+
 
 export const cv = require('./opencv.js');
 cv.onRuntimeInitialized = function () {
@@ -45,10 +47,11 @@ export class OpenCvNode implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
-					{name: "Thresholding", value: "thresholding"},
+					{name: "Binary Operations", value: "binaryOps", description: "Bitwise operations (e.g. AND, OR, NOT)"},
 					{name: "Color Modifications", value: "color"},
 					{name: "Image Stats", value: "stats"},
-					{name: "Binary Operations", value: "binaryOps", description: "Bitwise operations (e.g. AND, OR, NOT)"},
+					{name: "Morphological", value: "morphological", description: "Morphological operations (e.g. erode, dilate)"},
+					{name: "Thresholding", value: "thresholding"},
 				],
 				default: "thresholding",
 				required: true,
@@ -58,6 +61,7 @@ export class OpenCvNode implements INodeType {
 			...color.description,
 			...stats.description,
 			...binary.description,
+			...morphological.description,
 			{
 				displayName: "Advanced Options",
 				placeholder: 'Advanced Options',
@@ -107,6 +111,9 @@ export class OpenCvNode implements INodeType {
 				break;
 			case "binaryOps":
 				items = await binary.execute.call(this);
+				break;
+			case "morphological":
+				items = await morphological.execute.call(this);
 				break;
 		}
 
