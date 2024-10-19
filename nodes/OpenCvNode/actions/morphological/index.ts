@@ -57,6 +57,11 @@ export const description: INodeProperties[] = [
 		type: "number",
 		default: 1,
 		hint: "Use odd numbers only. Kernels are squares",
+		displayOptions: {
+			show: {
+				module: ['morphological'],
+			},
+		},
 	},
 	...erode.description,
 	...dilate.description,

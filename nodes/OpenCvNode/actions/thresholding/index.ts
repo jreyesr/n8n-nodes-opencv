@@ -1,6 +1,7 @@
 import {IExecuteFunctions, INodeExecutionData, INodeProperties} from "n8n-workflow";
 
 import * as binary from './binary.operation';
+import * as automatic from './automatic.operation';
 import * as adaptive from './adaptive.operation';
 
 
@@ -18,11 +19,17 @@ export const description: INodeProperties[] = [
 				action: 'Binary threshold',
 			},
 			{
+				name: 'Automatic',
+				value: 'automatic',
+				description: 'Thresholds where the value is computed automatically',
+				action: 'Automatic threshold',
+			},
+			{
 				name: 'Adaptive',
 				value: 'adaptive',
-				description: 'Adaptive thresholds where the value is computed automatically',
+				description: 'Adaptive threshold that adapts to brightness changes across the image',
 				action: 'Adaptive threshold',
-			},
+			}
 		],
 		default: 'binary',
 		displayOptions: {
@@ -32,7 +39,8 @@ export const description: INodeProperties[] = [
 		},
 	},
 	...binary.description,
-	...adaptive.description
+	...automatic.description,
+	...adaptive.description,
 ]
 
 export async function execute(this: IExecuteFunctions): Promise<INodeExecutionData[]> {
@@ -41,6 +49,8 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 	switch (operation) {
 		case "binary":
 			return binary.execute.call(this);
+		case "automatic":
+			return automatic.execute.call(this);
 		case "adaptive":
 			return adaptive.execute.call(this);
 	}
