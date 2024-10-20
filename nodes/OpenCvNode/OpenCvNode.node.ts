@@ -10,6 +10,7 @@ import * as color from './actions/color/index';
 import * as stats from './actions/stats/index';
 import * as binary from './actions/binary/index';
 import * as morphological from './actions/morphological/index';
+import * as blur from './actions/blur/index';
 
 
 export const cv = require('./opencv.js');
@@ -48,6 +49,7 @@ export class OpenCvNode implements INodeType {
 				noDataExpression: true,
 				options: [
 					{name: "Binary Operations", value: "binaryOps", description: "Bitwise operations (e.g. AND, OR, NOT)"},
+					{name: "Blurring", value: "blur", description: "Various blurring algorithms"},
 					{name: "Color Modifications", value: "color"},
 					{name: "Image Stats", value: "stats"},
 					{name: "Morphological", value: "morphological", description: "Morphological operations (e.g. erode, dilate)"},
@@ -62,6 +64,7 @@ export class OpenCvNode implements INodeType {
 			...stats.description,
 			...binary.description,
 			...morphological.description,
+			...blur.description,
 			{
 				displayName: "Advanced Options",
 				placeholder: 'Advanced Options',
@@ -114,6 +117,9 @@ export class OpenCvNode implements INodeType {
 				break;
 			case "morphological":
 				items = await morphological.execute.call(this);
+				break;
+			case "blur":
+				items = await blur.execute.call(this);
 				break;
 		}
 
