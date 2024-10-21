@@ -27,6 +27,22 @@ export const description: INodeProperties[] = [
 	...histogram.description,
 ]
 
+export const advancedOptions: INodeProperties[] = [
+	{
+		displayName: 'Histogram Height',
+		name: 'height',
+		type: 'number',
+		default: 200,
+		description: 'The name of the binary property that will contain the output image',
+		displayOptions: {
+			show: {
+				'/module': ['stats'],
+				'/operation': ['histogram'],
+			}
+		}
+	},
+]
+
 export async function execute(this: IExecuteFunctions): Promise<INodeExecutionData[]> {
 	const operation = this.getNodeParameter('operation', 0);
 

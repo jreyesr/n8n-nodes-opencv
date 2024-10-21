@@ -11,6 +11,7 @@ import * as stats from './actions/stats/index';
 import * as binary from './actions/binary/index';
 import * as morphological from './actions/morphological/index';
 import * as blur from './actions/blur/index';
+import * as edgeDetection from './actions/edgeDetection/index';
 
 
 export const cv = require('./opencv.js');
@@ -51,6 +52,7 @@ export class OpenCvNode implements INodeType {
 					{name: "Binary Operations", value: "binaryOps", description: "Bitwise operations (e.g. AND, OR, NOT)"},
 					{name: "Blurring", value: "blur", description: "Various blurring algorithms"},
 					{name: "Color Modifications", value: "color"},
+					{name: "Edge Detection", value: "edgeDetection"},
 					{name: "Image Stats", value: "stats"},
 					{name: "Morphological", value: "morphological", description: "Morphological operations (e.g. erode, dilate)"},
 					{name: "Thresholding", value: "thresholding"},
@@ -65,6 +67,7 @@ export class OpenCvNode implements INodeType {
 			...binary.description,
 			...morphological.description,
 			...blur.description,
+			...edgeDetection.description,
 			{
 				displayName: "Advanced Options",
 				placeholder: 'Advanced Options',
@@ -80,19 +83,8 @@ export class OpenCvNode implements INodeType {
 						requiresDataPath: 'single',
 						description: 'The name of the binary property that will contain the output image'
 					},
-					{
-						displayName: 'Histogram Height',
-						name: 'height',
-						type: 'number',
-						default: 200,
-						description: 'The name of the binary property that will contain the output image',
-						displayOptions: {
-							show: {
-								'/module': ['stats'],
-								'/operation': ['histogram'],
-							}
-						}
-					},
+					...stats.advancedOptions,
+					...edgeDetection.advancedOptions,
 				]
 			}
 		],
@@ -120,6 +112,9 @@ export class OpenCvNode implements INodeType {
 				break;
 			case "blur":
 				items = await blur.execute.call(this);
+				break;
+			case "edgeDetection":
+				items = await edgeDetection.execute.call(this);
 				break;
 		}
 
