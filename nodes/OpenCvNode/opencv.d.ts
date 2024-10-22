@@ -14,6 +14,11 @@ declare namespace cv {
 		static ones: (width: number, height: number, channelSize: any) => Mat;
 	}
 
+	declare class MatVector {
+		constructor();
+		delete();
+	}
+
 	declare class Point {
 		declare x: number;
 		declare y: number;

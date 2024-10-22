@@ -78,6 +78,7 @@ export const execute = makeProcessor(async function (src, itemIndex, newItem) {
 			contourPoints[i].push(new cv.Point(x, y));
 		}
 	}
+	contours.delete();
 
 	// hierarchy comes in a (N rows, 4 cols) Mat with CV_32F values
 	// For each row:
@@ -94,6 +95,7 @@ export const execute = makeProcessor(async function (src, itemIndex, newItem) {
 			parent: hierarchy.data32S[4 * i + 3],
 		})
 	}
+	hierarchy.delete();
 
 	newItem.json = {
 		points: contourPoints,

@@ -70,7 +70,6 @@ export const execute = makeProcessor(async function (src, itemIndex, newItem) {
 	const colorAsNum = parseInt(color.replace("#", ""), 16)
 	const r = (colorAsNum >> 16) % 256, g = (colorAsNum >> 8) % 256, b = colorAsNum % 256;
 	const lineWidth = this.getNodeParameter("advancedOptions.lineWidth", itemIndex, 1) as number;
-	console.log(src.channels());
 
 	const contoursCv = new cv.MatVector();
 	for (let contour of contours) {
@@ -83,6 +82,7 @@ export const execute = makeProcessor(async function (src, itemIndex, newItem) {
 
 	const dst = src.clone();
 	cv.drawContours(dst, contoursCv, -1, new cv.Scalar(r, g, b, 255), lineWidth, cv.LINE_8, hierarchyCv)
+	contoursCv.delete(); hierarchyCv.delete();
 
 	return dst
 })
