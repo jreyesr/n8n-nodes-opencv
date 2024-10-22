@@ -1,46 +1,64 @@
-![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
+# n8n-nodes-opencv
 
-# n8n-nodes-starter
+This is an N8N community node. It lets you use [OpenCV.js](https://docs.opencv.org/3.4/df/d0a/tutorial_js_intro.html) (a
+version of OpenCV that can run in browsers and Node.JS environments) in your N8N workflows.
 
-This repo contains example nodes to help you get started building your own custom integrations for [n8n](n8n.io). It includes the node linter and other dependencies.
+OpenCV is an open-source image processing library that contains lots of computer vision algorithms.
+This node exposes some common OpenCV operations so they can be used in N8N workflows.
 
-To make your custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
+For example:
 
-## Prerequisites
+* Image binarization/thresholding:
+	![simple binarization](docs/binarization.png)
+* Binary operations (e.g. NOT):
+	![bitwise NOT on binary image](docs/not.png)
+* Morphological operators (erosion, dilation, opening, closing):
+	![erosion performed on a binary image](docs/erosion.png)
+* Histogram computation
+	![a grayscale histogram computed on a color image](docs/histogram.png)
+* Various blurring algorithms
+	![an image being blurred with a Gaussian blur](docs/blur.png)
+* Edge detection algorithms (e.g. Canny, Laplacian)
+	![the Canny algorithm used to detect the edges in an image](docs/canny.png)
+* Contour detection
+	![an image with contours drawn on top of it](docs/contours.png)
 
-You need the following installed on your development machine:
+[Installation](#installation)  
+[Resources](#resources)  
+[Development](#development)
 
-* [git](https://git-scm.com/downloads)
-* Node.js and pnpm. Minimum version Node 18. You can find instructions on how to install both using nvm (Node Version Manager) for Linux, Mac, and WSL [here](https://github.com/nvm-sh/nvm). For Windows users, refer to Microsoft's guide to [Install NodeJS on Windows](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows).
-* Install n8n with:
-  ```
-  pnpm install n8n -g
-  ```
-* Recommended: follow n8n's guide to [set up your development environment](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/).
+## Installation
 
-## Using this starter
+Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community
+nodes documentation.
 
-These are the basic steps for working with the starter. For detailed guidance on creating and publishing nodes, refer to the [documentation](https://docs.n8n.io/integrations/creating-nodes/).
+## Resources
 
-1. [Generate a new repository](https://github.com/n8n-io/n8n-nodes-starter/generate) from this template repository.
-2. Clone your new repo:
-   ```
-   git clone https://github.com/<your organization>/<your-repo-name>.git
-   ```
-3. Run `pnpm i` to install dependencies.
-4. Open the project in your editor.
-5. Browse the examples in `/nodes` and `/credentials`. Modify the examples, or replace them with your own nodes.
-6. Update the `package.json` to match your details.
-7. Run `pnpm lint` to check for errors or `pnpm lintfix` to automatically fix errors when possible.
-8. Test your node locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
-9. Replace this README with documentation for your node. Use the [README_TEMPLATE](README_TEMPLATE.md) to get started.
-10. Update the LICENSE file to use your details.
-11. [Publish](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry) your package to npm.
+* [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/)
+* [OpenCV.js docs](https://docs.opencv.org/3.4/d5/d10/tutorial_js_root.html)
 
-## More information
 
-Refer to our [documentation on creating nodes](https://docs.n8n.io/integrations/creating-nodes/) for detailed information on building your own nodes.
+## Development
+
+1. Clone the repo:
+	 ```
+	 git clone https://github.com/jreyesr/n8n-nodes-opencv.git
+	 ```
+2. Run `pnpm i` to install dependencies.
+3. Open the project in your editor.
+4. Make changes, fix bugs, or add new operations. To add a new operation:
+	* If adding a new operation on an existing module (e.g. another thresholding algorithm), add it
+		on `nodes/OpenCvNode/actions/<module_name>/<new_operation_name>.operation.ts`, and register it
+		on `nodes/OpenCvNode/actions/<module_name>/index.ts`
+	* If adding an entirely new module (a broad set of OpenCV functionality, e.g. "object tracking" or "DNNs"), add it
+		on `nodes/OpenCvNode/actions/<new_module_name>`, and register the new module
+		on `nodes/OpenCvNode/OpenCvNode.node.ts`
+5. Run `pnpm lint` to check for errors or `pnpm lintfix` to automatically fix errors when possible.
+6. Test the node locally. Refer
+	 to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
+7. (jreyesr only) [Publish](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry) the
+	 package to npm.
 
 ## License
 
-[MIT](https://github.com/n8n-io/n8n-nodes-starter/blob/master/LICENSE.md)
+[Apache License v2.0](LICENSE.txt)
