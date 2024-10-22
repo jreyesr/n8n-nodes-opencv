@@ -12,6 +12,7 @@ import * as binary from './actions/binary/index';
 import * as morphological from './actions/morphological/index';
 import * as blur from './actions/blur/index';
 import * as edgeDetection from './actions/edgeDetection/index';
+import * as contours from './actions/contours/index';
 
 
 export const cv = require('./opencv.js');
@@ -52,6 +53,7 @@ export class OpenCvNode implements INodeType {
 					{name: "Binary Operations", value: "binaryOps", description: "Bitwise operations (e.g. AND, OR, NOT)"},
 					{name: "Blurring", value: "blur", description: "Various blurring algorithms"},
 					{name: "Color Modifications", value: "color"},
+					{name: "Contours", value: "contours"},
 					{name: "Edge Detection", value: "edgeDetection"},
 					{name: "Image Stats", value: "stats"},
 					{name: "Morphological", value: "morphological", description: "Morphological operations (e.g. erode, dilate)"},
@@ -68,6 +70,7 @@ export class OpenCvNode implements INodeType {
 			...morphological.description,
 			...blur.description,
 			...edgeDetection.description,
+			...contours.description,
 			{
 				displayName: "Advanced Options",
 				placeholder: 'Advanced Options',
@@ -85,6 +88,7 @@ export class OpenCvNode implements INodeType {
 					},
 					...stats.advancedOptions,
 					...edgeDetection.advancedOptions,
+					...contours.advancedOptions,
 				]
 			}
 		],
@@ -115,6 +119,9 @@ export class OpenCvNode implements INodeType {
 				break;
 			case "edgeDetection":
 				items = await edgeDetection.execute.call(this);
+				break;
+			case "contours":
+				items = await contours.execute.call(this);
 				break;
 		}
 

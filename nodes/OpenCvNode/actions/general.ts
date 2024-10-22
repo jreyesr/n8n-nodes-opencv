@@ -3,7 +3,7 @@ import {Jimp} from "jimp";
 import {cv} from "../OpenCvNode.node";
 
 type NodeExecuteFunction = (this: IExecuteFunctions) => Promise<INodeExecutionData[]>
-export type ProcessorFunction = (this: IExecuteFunctions, src: cv.Mat, itemIndex: number, newItem: INodeExecutionData) => Promise<cv.Mat>
+export type ProcessorFunction = (this: IExecuteFunctions, src: cv.Mat, itemIndex: number, newItem: INodeExecutionData) => Promise<cv.Mat | null>
 
 /**
  * Higher-order function that builds the skeleton of an `execute()` call (read parameters, read the input image to
@@ -44,28 +44,31 @@ export function makeProcessor(process: ProcessorFunction): NodeExecuteFunction {
 			this.logger.debug("Calling node-specific transform function...")
 			const dst = await process.call(this, src, itemIndex, newItem);
 			src.delete();
-			if (dst.channels() === 3) {
-				this.logger.debug(`Returned Mat is RGB, should be RGBA. Correcting`);
-				cv.cvtColor(dst, dst, cv.COLOR_RGB2RGBA, 0); // Add the A channel back, Jimp needs it
-			} else if (dst.channels() === 1) {
-				this.logger.debug(`Returned Mat is grayscale, should be RGBA. Correcting`);
-				cv.cvtColor(dst, dst, cv.COLOR_GRAY2RGBA, 0);
-			} else if (dst.channels() !== 4) {
-				throw new Error(`BUG: Returned Mat has ${dst.channels()} channels, should have 4. This is likely a bug in the node, please report to the maintainers.`)
-			}
-			// now we're sure that dst is RGBA
 
-			const binaryData = await this.helpers.prepareBinaryData(await new Jimp({
-				width: dst.cols,
-				height: dst.rows,
-				data: Buffer.from(dst.data)
-			}).getBuffer("image/png"));
-			newItem.binary![outputPropertyName] = {
-				...newItem.binary![imagePropertyName],
-				...binaryData,
-				mimeType: "image/png",
-			};
-			dst.delete();
+			if (dst !== null) { // may be null, which means that the node doesn't generate an image (e.g. stats or contour detection)
+				if (dst.channels() === 3) {
+					this.logger.debug(`Returned Mat is RGB, should be RGBA. Correcting`);
+					cv.cvtColor(dst, dst, cv.COLOR_RGB2RGBA, 0); // Add the A channel back, Jimp needs it
+				} else if (dst.channels() === 1) {
+					this.logger.debug(`Returned Mat is grayscale, should be RGBA. Correcting`);
+					cv.cvtColor(dst, dst, cv.COLOR_GRAY2RGBA, 0);
+				} else if (dst.channels() !== 4) {
+					throw new Error(`BUG: Returned Mat has ${dst.channels()} channels, should have 4. This is likely a bug in the node, please report to the maintainers.`)
+				}
+				// now we're sure that dst is RGBA
+
+				const binaryData = await this.helpers.prepareBinaryData(await new Jimp({
+					width: dst.cols,
+					height: dst.rows,
+					data: Buffer.from(dst.data)
+				}).getBuffer("image/png"));
+				newItem.binary![outputPropertyName] = {
+					...newItem.binary![imagePropertyName],
+					...binaryData,
+					mimeType: "image/png",
+				};
+				dst.delete();
+			}
 
 			toReturn.push(newItem)
 		}
