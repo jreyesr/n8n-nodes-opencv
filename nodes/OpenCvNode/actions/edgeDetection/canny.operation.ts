@@ -8,6 +8,12 @@ export const description: INodeProperties[] = [
 		name: "cannyThresholdNotice",
 		type: "notice",
 		default: "",
+		displayOptions: {
+			show: {
+				module: ['edgeDetection'],
+				method: ["canny"],
+			},
+		},
 	},
 	{
 		displayName: "Lower Threshold",
@@ -17,6 +23,12 @@ export const description: INodeProperties[] = [
 		typeOptions: {
 			minValue: 0,
 		},
+		displayOptions: {
+			show: {
+				module: ['edgeDetection'],
+				method: ["canny"],
+			},
+		},
 	},
 	{
 		displayName: "Upper Threshold",
@@ -25,6 +37,12 @@ export const description: INodeProperties[] = [
 		default: 100,
 		typeOptions: {
 			minValue: 0,
+		},
+		displayOptions: {
+			show: {
+				module: ['edgeDetection'],
+				method: ["canny"],
+			},
 		},
 	},
 ];
@@ -48,7 +66,6 @@ export const execute = makeProcessor(async function (src, itemIndex) {
 
 	const dst = new cv.Mat();
 	cv.cvtColor(src, src, cv.COLOR_RGB2GRAY, 0);
-	console.log(threshold1, threshold2, apertureSize)
 	cv.Canny(src, dst, threshold1, threshold2, apertureSize, false);
 
 	return dst
