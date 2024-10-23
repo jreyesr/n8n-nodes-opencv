@@ -98,7 +98,7 @@ export const execute = makeProcessor(async function (src, itemIndex, newItem) {
 	hierarchy.delete();
 
 	newItem.json = {
-		points: contourPoints,
+		contours: contourPoints,
 		hierarchy: outHierarchy,
 	}
 	return null
