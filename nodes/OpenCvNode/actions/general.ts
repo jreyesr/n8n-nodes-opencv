@@ -3,6 +3,20 @@ import {Jimp} from "jimp";
 import {cv} from "../OpenCvNode.node";
 
 type NodeExecuteFunction = (this: IExecuteFunctions) => Promise<INodeExecutionData[]>
+/**
+ * A function that receives a {@link cv.Mat} containing an image, processes it, and returns a new image. Can optionally
+ * set JSON data that will be returned in the node's ``$json`` fields.
+ *
+ * @param this {IExecuteFunctions} The function's ``this`` value is set to the same as in the node's ``execute()`` function. It contains
+ * 						 useful functions to, for example, fetch the input data, get node parameters, or access workflow metadata
+ * @param src {cv.Mat} A {@link cv.Mat} that contains the input image, decoded from a binary item in the N8N input item. This
+ * 						matrix will be handled by the node code, the processor function doesn't need to call {@link cv.Mat#delete} on it
+ * @param itemIndex {number} The item number (0 for the first item, and so on), if the node was called with multiple input items
+ * @param newItem {INodeExecutionData} The half-filled data that will be returned from the node. Exposed here so the processor function can,
+ *                if necessary, set data in the node's JSON output. By default, OpenCV nodes will output no JSON data
+ * @returns {Promise<cv.Mat | null>} Optionally, a new {@link cv.Mat} with a processed image. Can also be ``null``, if it
+ *          makes no sense for the node to return data (e.g. a node that computes image statistics)
+ */
 export type ProcessorFunction = (this: IExecuteFunctions, src: cv.Mat, itemIndex: number, newItem: INodeExecutionData) => Promise<cv.Mat | null>
 
 /**
