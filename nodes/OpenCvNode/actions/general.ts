@@ -1,4 +1,4 @@
-import {IExecuteFunctions, INodeExecutionData} from "n8n-workflow";
+import {IBinaryData, IExecuteFunctions, INodeExecutionData} from "n8n-workflow";
 import {Jimp} from "jimp";
 import {cv} from "../OpenCvNode.node";
 
@@ -34,10 +34,9 @@ export function makeProcessor(process: ProcessorFunction): NodeExecuteFunction {
 
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 			const item = items[itemIndex];
-			const imagePropertyName = this.getNodeParameter("inputImagePropertyName", itemIndex) as string;
-			const outputPropertyName = this.getNodeParameter('advancedOptions.outputImagePropertyName', itemIndex, 'out', {
-				extractValue: true,
-			}) as string;
+			const imagePropertyName = this.getNodeParameter("inputImagePropertyName", itemIndex, null) as string | null;
+			const advancedOptions = this.getNodeParameter('advancedOptions', itemIndex, {}) as {outputImagePropertyName?: string};
+			const outputPropertyName = advancedOptions?.outputImagePropertyName ?? "out";
 
 			const newItem: INodeExecutionData = {
 				json: item.json,
@@ -47,13 +46,16 @@ export function makeProcessor(process: ProcessorFunction): NodeExecuteFunction {
 				},
 			};
 
-			this.helpers.assertBinaryData(itemIndex, imagePropertyName);
-			const binaryDataBuffer = await this.helpers.getBinaryDataBuffer(
-				itemIndex,
-				imagePropertyName,
-			)
-			const jimpImg = await Jimp.fromBuffer(binaryDataBuffer)
-			const src = cv.matFromImageData(jimpImg.bitmap);
+			let src = new cv.Mat();
+			if (imagePropertyName !== null) {
+				this.helpers.assertBinaryData(itemIndex, imagePropertyName);
+				const binaryDataBuffer = await this.helpers.getBinaryDataBuffer(
+					itemIndex,
+					imagePropertyName,
+				)
+				const jimpImg = await Jimp.fromBuffer(binaryDataBuffer)
+				src = cv.matFromImageData(jimpImg.bitmap);
+			}
 
 			this.logger.debug("Calling node-specific transform function...")
 			const dst = await process.call(this, src, itemIndex, newItem);
@@ -71,13 +73,20 @@ export function makeProcessor(process: ProcessorFunction): NodeExecuteFunction {
 				}
 				// now we're sure that dst is RGBA
 
+				const defaultOutData: IBinaryData = {
+					mimeType: "image/png",
+					fileType: "image",
+					fileName: `${outputPropertyName}.png`,
+					data: "",
+					fileExtension: "png"
+				};
 				const binaryData = await this.helpers.prepareBinaryData(await new Jimp({
 					width: dst.cols,
 					height: dst.rows,
 					data: Buffer.from(dst.data)
 				}).getBuffer("image/png"));
 				newItem.binary![outputPropertyName] = {
-					...newItem.binary![imagePropertyName],
+					...(imagePropertyName ? newItem.binary![imagePropertyName] : defaultOutData),
 					...binaryData,
 					mimeType: "image/png",
 				};

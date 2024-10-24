@@ -42,7 +42,12 @@ export class OpenCvNode implements INodeType {
 				default: "",
 				required: true,
 				requiresDataPath: 'single',
-				description: 'The name of the binary property that will be transformed. Must contain an image.'
+				description: 'The name of the binary property that will be transformed. Must contain an image.',
+				displayOptions: {
+					hide: {
+						"operation": ["contourStats"],
+					}
+				}
 			},
 			{
 				displayName: 'Module',
@@ -84,7 +89,12 @@ export class OpenCvNode implements INodeType {
 						type: 'string',
 						default: "out",
 						requiresDataPath: 'single',
-						description: 'The name of the binary property that will contain the output image'
+						description: 'The name of the binary property that will contain the output image',
+						displayOptions: {
+							hide: {
+								"/operation": ["contourStats"]
+							}
+						}
 					},
 					...stats.advancedOptions,
 					...edgeDetection.advancedOptions,

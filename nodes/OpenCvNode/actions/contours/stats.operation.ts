@@ -13,7 +13,7 @@ export const description: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				module: ['contours'],
-				operation: ["stats"],
+				operation: ["contourStats"],
 			},
 		},
 	},

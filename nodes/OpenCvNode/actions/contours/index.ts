@@ -14,7 +14,7 @@ export const description: INodeProperties[] = [
 		options: [
 			{name: "Find", value: "find", description: "Find contours in a binary image", action: "Find contours"},
 			{name: "Draw", value: "draw", description: "Draw contours over an image", action: "Draw contours"},
-			{name: "Stats", value: "stats", description: "Compute some stats for a single contour", action: "Contour stats"},
+			{name: "Stats", value: "contourStats", description: "Compute some stats for a single contour", action: "Contour stats"},
 		],
 		default: "find",
 		required: true,
@@ -42,7 +42,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 			return find.execute.call(this);
 		case "draw":
 			return draw.execute.call(this);
-		case "stats":
+		case "contourStats":
 			return stats.execute.call(this);
 	}
 
