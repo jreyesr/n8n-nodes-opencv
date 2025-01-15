@@ -3,6 +3,7 @@ import {IExecuteFunctions, INodeExecutionData, INodeProperties} from "n8n-workfl
 import * as find from './find.operation';
 import * as draw from './draw.operation';
 import * as stats from './stats.operation';
+import * as connectedComponents from './connectedComponents.operation';
 
 
 export const description: INodeProperties[] = [
@@ -15,6 +16,7 @@ export const description: INodeProperties[] = [
 			{name: "Find", value: "find", description: "Find contours in a binary image", action: "Find contours"},
 			{name: "Draw", value: "draw", description: "Draw contours over an image", action: "Draw contours"},
 			{name: "Stats", value: "contourStats", description: "Compute some stats for a single contour", action: "Contour stats"},
+			{name: "Connected Components", value: "connectedComponents", description: "Compute some stats for a single contour", action: "Find connected components"},
 		],
 		default: "find",
 		required: true,
@@ -27,6 +29,7 @@ export const description: INodeProperties[] = [
 	...find.description,
 	...draw.description,
 	...stats.description,
+	...connectedComponents.description,
 ]
 
 export const advancedOptions: INodeProperties[] = [
@@ -43,7 +46,9 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 		case "draw":
 			return draw.execute.call(this);
 		case "contourStats":
-			return stats.execute.call(this);
+			return stats.execute.call(this)
+		case "connectedComponents":
+			return connectedComponents.execute.call(this);
 	}
 
 	return []
