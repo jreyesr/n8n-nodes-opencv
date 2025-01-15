@@ -59,6 +59,19 @@ nodes documentation.
 7. (jreyesr only) [Publish](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry) the
 	 package to npm.
 
+## Changelog
+
+### v1.0.0
+
+Initial release
+
+* Binary operations (multiple thresholding algorithms, including adaptive algs)
+* Morphological operations (erosion, dilation, opening, closing)
+* Blurs (box, gaussian, bilateral, ...)
+* Convert a color image to grayscale
+* Contours and connected components: CC detection, contour drawing
+* Edge detection (Canny, Sobel, laplacian, ...)
+
 ## License
 
 [Apache License v2.0](LICENSE.txt)
