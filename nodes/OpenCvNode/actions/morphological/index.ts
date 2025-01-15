@@ -12,6 +12,7 @@ export const description: INodeProperties[] = [
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
+		// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 		options: [
 			{
 				name: 'Erode',
